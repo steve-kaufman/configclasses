@@ -11,7 +11,7 @@ class MyConfigClass:
     baz: bool
 
 @retain_sys_args
-def test_configclass_with_args():
+def test_with_cli_args():
     sys.argv = [sys.argv[0], '--foo', 'apple', '--bar', '5', '--baz']
 
     my_config_class = MyConfigClass()
@@ -21,7 +21,7 @@ def test_configclass_with_args():
     assert(my_config_class.baz == True)
 
 @retain_environ
-def test_configclass_with_env():
+def test_with_env():
     os.environ["FOO"] = "banana"
     os.environ["BAR"] = "6"
     os.environ["BAZ"] = "true"
@@ -34,7 +34,7 @@ def test_configclass_with_env():
 
 @retain_sys_args
 @retain_environ
-def test_configclass_with_args_and_env():
+def test_with_args_and_env():
     sys.argv = [sys.argv[0], '--bar', '7', '--baz']
     os.environ["FOO"] = "orange"
 
@@ -49,3 +49,14 @@ def test_with_constructor_args():
     assert(my_config_class.foo == "grape")
     assert(my_config_class.bar == 8)
     assert(my_config_class.baz == False)
+
+@retain_sys_args
+@retain_environ
+def test_with_all_three():
+    sys.argv = [sys.argv[0], '--baz']
+    os.environ["BAR"] = "9"
+    my_config_class = MyConfigClass(foo="pear")
+
+    assert(my_config_class.foo == "pear")
+    assert(my_config_class.bar == 9)
+    assert(my_config_class.baz == True)

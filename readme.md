@@ -81,9 +81,9 @@ from configclasses import configclass, cfgbool, cfgint, cfgstr
 
 @configclass
 class MyConfigClass:
-    foo: cfgstr(env_var="MY_FOO", parser_args=["--my-foo"])
-    bar: cfgint(parser_kwargs={"default": 7})
-    baz: cfgbool(env_var="SHOULD_BAZ", parser_args=["-b", "--should-baz"])
+    foo: cfgtype(str, env_var="MY_FOO", parser_args=["--my-foo"])
+    bar: cfgtype(int, parser_kwargs={"default": 7})
+    baz: cfgtype(bool, env_var="SHOULD_BAZ", parser_args=["-b", "--should-baz"])
 
 my_config_class = MyConfigClass()
 print(my_config_class.foo)

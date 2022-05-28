@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from typing import Type, TypeVar
 
 class ConfigType:
     _primitive: type
@@ -6,7 +6,9 @@ class ConfigType:
     _parser_kwargs: dict
     _env_var: str
 
-def cfgtype(primitive: type, parser_args: list[str] = None, parser_kwargs: dict = None, env_var: str = None) -> type:
+T = TypeVar("T")
+
+def cfgtype(primitive: Type[T], parser_args: list[str] = None, parser_kwargs: dict = None, env_var: str = None) -> Type[T]:
     type_name = f"Config{primitive.__name__.capitalize()}"
     base_types = (ConfigType,)
     namespace = dict(

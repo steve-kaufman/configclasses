@@ -30,7 +30,7 @@ def _setup_field(field: Field, parser: ArgumentParser):
     config = field.type
 
     parser_args = config._parser_args if config._parser_args else [f"--{field.name.replace('_','-')}"]
-    parser_kwargs = {}
+    parser_kwargs = {"dest": field.name}
     _add_defaults(config._primitive, parser_kwargs)
     if config._parser_kwargs:
         parser_kwargs.update(config._parser_kwargs) # override default config
@@ -55,7 +55,7 @@ def _get_field_value(field: Field, constructor_kwargs: dict, cli_args: Namespace
 
     # Check Env. Vars
     try:
-        env_value = field.type._primitive(os.environ.get(field.name.upper()))
+        env_value = field.type._primitive(os.environ.get(field.type._env_var or field.name.upper()))
     except ValueError:
         raise Exception(f"{field.name.upper()}: expected type {field.type.__name__}")
     if env_value:
