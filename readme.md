@@ -92,7 +92,7 @@ print(my_config_class.baz)
 ```
 Let's run it:
 ```
-$ python my_config_class --my-foo apple -b
+$ python my_config_class.py --my-foo apple -b
 ```
 Expected Output:
 ```
@@ -103,3 +103,36 @@ True
 The `parser_args` and `parser_kwargs` arguments correspond to the args and
 kwargs passed to `parser.add_argument()` with the 
 [**`argparse`**](https://docs.python.org/3/library/argparse.html) library. 
+
+## Additional Features
+### Docstring for help text
+In order to customize the help text for the CLI, simply add a docstring to the
+config class:
+```python
+from configclasses import configclass
+
+@configclass
+class MyConfigClass:
+    """Check out the docstring in the CLI's help output!"""
+    foo: str
+    bar: int
+    baz: bool
+
+if __name__ == "__main__":
+    MyConfigClass()
+```
+```
+$ python my_config_class.py --help
+```
+Output:
+```
+usage: my_config_class.py [-h] [--foo FOO] [--bar BAR] [--baz]
+
+Check out the docstring in the CLI's help output!
+
+options:
+  -h, --help  show this help message and exit
+  --foo FOO
+  --bar BAR
+  --baz
+```
