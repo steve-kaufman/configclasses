@@ -2,7 +2,7 @@ from configclasses import configclass
 
 @configclass
 class MyConfigClass:
-    """Example config class"""
+    """Check out the docstring in the CLI's help output!"""
     foo: str
     bar: int
     baz: bool
