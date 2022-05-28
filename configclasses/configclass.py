@@ -8,7 +8,7 @@ def configclass(cls: type):
     __dataclass_init__ = cls.__init__
 
     def init_wrapper(self, **constructor_kwargs):
-        parser = ArgumentParser(cls.__doc__ or cls.__name__)
+        parser = ArgumentParser(description=(cls.__doc__ or cls.__name__))
         for field in fields(cls):
             _setup_field(field, parser)
 
