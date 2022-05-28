@@ -5,7 +5,7 @@ with open("readme.md") as readme_file:
 
 setup(
     name="configclasses",
-    version="0.0.1",
+    version="0.1.0",
     packages=find_packages(),
     description="Class annotation for easy configuration dataclasses",
     long_description=long_description,
