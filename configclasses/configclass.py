@@ -35,20 +35,20 @@ def _setup_field(field: Field, parser: ArgumentParser):
         field.type = cfgtype(field.type)
     config = field.type
 
-    parser_args = config._parser_args if config._parser_args else [f"--{field.name.replace('_','-')}"]
-    parser_kwargs = {"dest": field.name}
+    cli_args = config._cli_args if config._cli_args else [f"--{field.name.replace('_','-')}"]
+    cli_kwargs = {"dest": field.name}
 
-    _add_defaults(config._primitive, parser_kwargs)
-    if config._parser_kwargs:
-        parser_kwargs.update(config._parser_kwargs) # override default config
+    _add_defaults(config._primitive, cli_kwargs)
+    if config._cli_kwargs:
+        cli_kwargs.update(config._cli_kwargs) # override default config
 
-    parser.add_argument(*parser_args, **parser_kwargs)
+    parser.add_argument(*cli_args, **cli_kwargs)
 
-def _add_defaults(type: type, parser_kwargs: dict):
+def _add_defaults(type: type, cli_kwargs: dict):
     if type == bool:
-        parser_kwargs["action"] = "store_true"
+        cli_kwargs["action"] = "store_true"
     else:
-        parser_kwargs["type"] = type
+        cli_kwargs["type"] = type
 
 def _get_field_value(field: Field, constructor_kwargs: dict, cli_args: Namespace) -> any:
     # Check Constructor
@@ -61,11 +61,13 @@ def _get_field_value(field: Field, constructor_kwargs: dict, cli_args: Namespace
         return arg_value
 
     # Check Env. Vars
+    env_var = field.type._env_var or field.name.upper() # defaults to FIELD_NAME
     try:
-        env_value = field.type._primitive(os.environ.get(field.type._env_var or field.name.upper()))
+        env_value = field.type._primitive(os.environ.get(env_var))
     except ValueError:
         raise Exception(f"{field.name.upper()}: expected type {field.type.__name__}")
     if env_value:
         return env_value
 
+    # No value provided
     return None

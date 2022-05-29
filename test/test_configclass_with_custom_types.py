@@ -23,9 +23,9 @@ def test_with_no_custom_params():
 
 @configclass
 class MyConfigClass2:
-    foo: cfgtype(str, parser_args=["--my-foo"])
-    bar: cfgtype(int, parser_kwargs={"default": 6})
-    baz: cfgtype(bool, parser_args=["-b"])
+    foo: cfgtype(str, cli_args=["--my-foo"])
+    bar: cfgtype(int, default=6)
+    baz: cfgtype(bool, cli_args=["-b"])
 
 @retain_sys_args
 def test_with_custom_cli_config():
@@ -57,9 +57,9 @@ def test_with_custom_env_config():
 
 @configclass
 class MyConfigClass4:
-    foo: cfgtype(str, parser_args=["--my-foo"])
+    foo: cfgtype(str, cli_args=["--my-foo"])
     bar: cfgtype(int, env_var="MY_BAR")
-    baz: cfgtype(bool, parser_args=["-b"])
+    baz: cfgtype(bool, cli_args=["-b"])
 
 @retain_environ
 @retain_sys_args

@@ -2,8 +2,8 @@
 
 The `@configclass` decorator works very much like the built-in `@dataclass`
 decorator, with the additional functionality that it will automatically
-retrieve values from either the command line, environment variables, or from
-the constructor!
+retrieve values from either the constructor, the command line, environment
+variables, or any assigned defaults, in that order!
 
 ## Examples:
 Here's some simple default behavior. Let's call the following class
@@ -48,15 +48,17 @@ True
 
 Note, however, that the default behavior of a bool is to act as a flag, so any
 value input to the $BAZ environment variable will result in the bool being true:
-```
-$ FOO=banana BAR=6 BAZ=false python my_config_class.py
-```
+
+<code><pre>
+ &#36; FOO=banana BAR=6 <span style="color:cyan;">BAZ=false</span> python my_config_class.py
+</pre></code>
+
 Expected output:
-```
+<code><pre>
 banana
 6
-True
-```
+<span style="color:cyan">True</span> <span style="color: gray"># still</span>
+</pre></code>
 
 ## Custom Config Types
 
@@ -68,12 +70,31 @@ the default behavior is to accept a command line argument that is the same as
 the field name but with hyphens instead of underscores, or an environment
 variable that is the same as the field name but in all caps.
 
-Currently there are three custom types supported: `ConfigBool`, `ConfigInt`, and
-`ConfigStr`.
-For each of these, there's a utility function for generating the type based on
-some custom configuration: `cfgbool()`, `cfgint()`, and `cfgstr()` respectively.
+In order to create a custom type, use the `cfgtype()` utility function. This
+function accepts the following arguments:
 
-### Configuring With the Utility Functions:
+- `primitive`: ( `type` ) The primitive type that you would like the field to 
+    be. This is explicitly called 'primitive' and not 'type', because it's not 
+    really possible to derive a class from string input. You can still have 
+    complex types in your `configclass`, but you'll always need to pass them in 
+    the constructor.
+    - **required**
+- `cli_args`: ( `list[str]` ) The various names for this field in the command
+    line interface.
+    - ex: `['--foo', 'f', '--my-foo]`
+    - defaults to `['--field-name']` where the field is called `field_name`
+- `env_var`: ( `str` ) The name for this field's environment variable
+    - defaults to `FIELD_NAME` where the field is called `field_name`
+- `**kwargs`: ( `dict[str, Any]` ) passed directly to `parser.add_argument()`;
+    using the [**`argparse`**](https://docs.python.org/3/library/argparse.html)
+    library.
+    - ex: `cfgtype(str, help="Help text for this argument" default="some default 
+    value")`
+    - defaults to: `{"type": <primitive>}`, unless primitive is `bool`; then the
+    default is: `{"action": "store_true"}`. This makes bools behave like flags
+    and not values, which is generally more intuitive.
+
+### Configuring With `cfgtype()`:
 
 Here's another version of `my_config_class.py`:
 ```python
@@ -81,9 +102,9 @@ from configclasses import configclass, cfgbool, cfgint, cfgstr
 
 @configclass
 class MyConfigClass:
-    foo: cfgtype(str, env_var="MY_FOO", parser_args=["--my-foo"])
-    bar: cfgtype(int, parser_kwargs={"default": 7})
-    baz: cfgtype(bool, env_var="SHOULD_BAZ", parser_args=["-b", "--should-baz"])
+    foo: cfgtype(str, env_var="MY_FOO", cli_args=["--my-foo"])
+    bar: cfgtype(int, default=7)
+    baz: cfgtype(bool, env_var="SHOULD_BAZ", cli_args=["-b", "--should-baz"])
 
 my_config_class = MyConfigClass()
 print(my_config_class.foo)
@@ -100,9 +121,6 @@ apple
 7
 True
 ```
-The `parser_args` and `parser_kwargs` arguments correspond to the args and
-kwargs passed to `parser.add_argument()` with the 
-[**`argparse`**](https://docs.python.org/3/library/argparse.html) library. 
 
 ## Additional Features
 ### Docstring for help text
