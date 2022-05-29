@@ -49,16 +49,13 @@ True
 Note, however, that the default behavior of a bool is to act as a flag, so any
 value input to the $BAZ environment variable will result in the bool being true:
 
-<code><pre>
- &#36; FOO=banana BAR=6 <span style="color:cyan;">BAZ=false</span> python my_config_class.py
-</pre></code>
+<pre><code>&#36; FOO=banana BAR=6 <span style="color:cyan;">BAZ=false</span> python my_config_class.py</code></pre>
 
 Expected output:
-<code><pre>
-banana
+<pre><code>banana
 6
 <span style="color:cyan">True</span> <span style="color: gray"># still</span>
-</pre></code>
+</code></pre>
 
 ## Custom Config Types
 
